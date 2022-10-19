@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+	log.Println("Start Service Port :8080")
 	http.HandleFunc("/", services.HelloWorld)
 	http.HandleFunc("/invoice", services.GenerateInvoice)
 
