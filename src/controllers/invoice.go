@@ -1,9 +1,8 @@
-package services
+package controllers
 
 import (
-	"encoding/json"
 	"encoding/xml"
-	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/whacosta/API-Facturacion-Ecuador/src/models"
 	"github.com/whacosta/API-Facturacion-Ecuador/src/request"
 	"github.com/whacosta/API-Facturacion-Ecuador/src/utils"
@@ -12,10 +11,17 @@ import (
 	"strconv"
 )
 
-func GenerateInvoice(w http.ResponseWriter, r *http.Request) {
-	body := &request.InvoiceRequest{}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		fmt.Fprint(w, err)
+// GenerateInvoice godoc
+// @Summary      Generate New Invoice
+// @Tags         invoice
+// @Accept       json
+// @Param        invoice  body      request.InvoiceRequest  true  "New invoice"
+// @Router       /invoice [post]
+func (c *Controller) GenerateInvoice(ctx *gin.Context) {
+	body := request.InvoiceRequest{}
+
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		utils.NewError(ctx, http.StatusBadRequest, err)
 		return
 	}
 
@@ -86,7 +92,7 @@ func GenerateInvoice(w http.ResponseWriter, r *http.Request) {
 
 	response, err := SendInvoice(validateComprobante)
 	if err != nil {
-		fmt.Fprint(w, err)
+		utils.NewError(ctx, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -103,8 +109,7 @@ func GenerateInvoice(w http.ResponseWriter, r *http.Request) {
 		c.IndentedJSON(http.StatusOK, gin.H{"message": auth})
 		return
 	}*/
-	fmt.Fprint(w, response)
-
+	ctx.JSON(http.StatusOK, response)
 }
 
 func SendInvoice(request wsdl_sri.ValidarComprobante) (*wsdl_sri.ValidarComprobanteResponse, error) {

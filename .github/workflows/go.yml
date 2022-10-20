@@ -21,5 +21,3 @@ jobs:
     - name: Build
       run: go build -v ./src/main.go
 
-    - name: Test
-      run: go test -v ./src/main_test.go
