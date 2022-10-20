@@ -21,3 +21,9 @@ jobs:
     - name: Build
       run: go build -v ./src/main.go
 
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-facturacion
+        path: main
+        retention-days: 5
